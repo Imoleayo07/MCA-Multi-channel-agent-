@@ -1,0 +1,215 @@
+{
+  "name": "MCA-Email Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"message_id\": \"{{ 'EML-' + $now.toFormat('yyyyMMddHHmmssSSS') + '-' + Math.floor(1000 + Math.random() * 9000) }}\",\n  \"channel\": \"email\",\n  \"sender_name\": \"{{ $json.to.value[0].name }}\",\n  \"sender_email\": \"{{ $json.to.value[0].address }}\",\n  \"sender_phone\": \"\",\n  \"company\": \"\",\n  \"subject\": \"{{ $json.subject ?? '' }}\",\n  \"message\": \"{{ $json.text }}\",\n  \"received_at\": \"{{ $now.toISO() }}\",\n  \"gmail_message_id\": \"{{ $json.id }}\",\n  \"gmail_thread_id\": \"{{ $json.threadId }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        48,
+        -16
+      ],
+      "id": "60ccbe05-c1f5-4dde-b5f8-7b05a7f7b430",
+      "name": "SetEmailOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "RPE8SsWvugYWJCHY",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/RPE8SsWvugYWJCHY",
+          "cachedResultName": "MCA-Upsert- CRM"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        -16
+      ],
+      "id": "c19ecfd9-70fa-4bfb-93cc-6ac5322ac995",
+      "name": "Call 'MCA-Upsert- CRM'"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "sender": "akogunimoleayo@outlook.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -176,
+        -16
+      ],
+      "id": "3b69481b-303b-4500-9ca4-a75355e7a7c8",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AuDysXVOJNCJpN8M",
+          "name": "Akogun"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "1a0dfc875a1561ad",
+          "threadId": "1a0dfc470ab6218c",
+          "labelIds": [
+            "UNREAD",
+            "IMPORTANT",
+            "CATEGORY_PERSONAL",
+            "INBOX"
+          ],
+          "sizeEstimate": 13598,
+          "headers": {
+            "delivered-to": "Delivered-To: imoleayoakogun@gmail.com",
+            "received": "Received: from DB9P250MB1391.EURP250.PROD.OUTLOOK.COM\r\n ([fe80::cdaa:f4d6:dced:902]) by DB9P250MB1391.EURP250.PROD.OUTLOOK.COM\r\n ([fe80::cdaa:f4d6:dced:902%4]) with mapi id 15.21.0451.014; Sat, 26 Sep 2026\r\n 22:14:09 +0000",
+            "x-received": "X-Received: by 2002:a05:6a00:3c84:b0:851:8baf:5b26 with SMTP id d2e1a72fcca58-87e993770c3mr8280617b3a.14.1790460851610;\r\n        Sat, 26 Sep 2026 15:14:11 -0700 (PDT)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;\r\n b=GonvNavA0rhSAFirK4t0BZnwnUew3rxo/VqwP7vNylZN+c088krTfbxVczJdO88bRrtl2gx6sUtFtLJq/5Y85XvcjdoD+lZs9uewKHC+MUKwwN1Cjppu6lwJc6BkVbVmsWn7LGihQ06xx6NMPkKcyRripesI3dURivMA3kGIhPzsd1G6Uh2zG6rrLuAZo85CUckkbrgZkJNrb9E2SEkpi3CBZQxI5UmnHNSVg0cR0fuXwgRtzJtjQH1NzOo1mFad6yI062HjiOBoO5uZNzNUvJsNEmjbCduijb/QLW2BNUdmY+w9ox3Mwdf3st74E5tECrs5KEtYpOWRfQpUYQBD2w==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;\r\n s=arcselector10001;\r\n h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;\r\n bh=jFJxd5uSZeAvSvRpi4wb3DPoG5Zwf6N9VXZe9wW6+IE=;\r\n b=MQxqWuyJiY4PgnMjnTNlQZIsDM9LHkSLAixR/IfIaF0m1s7oEwUxhtuBqW7iOpCce7gToBYWX/yEcJ1ZvDx2iSnkUOZrecV1pC2oBNIlCc0HQkPWy7XkLeebCTX7ITsJnK6i/Hrrzj/MXltQzDzjc0rojtd/21nm96JqHi9sprrV2NgJvlLTLaiIiEkSxmgC+SiA2qp8p4YbT2k6z0v3ZqDSwHX7x7DbNejov86QrNWn49w+2YXTj+NjftEmXPcRnt6IP3YcJLJ+jBMpVBXjjGcmNUtEosGgGlFdrkIVGdiU4FMKWwoI2URwguTTgeygvX7oo/4co+NhR+mH1yLy5Q==",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;\r\n dkim=none; arc=none",
+            "return-path": "Return-Path: <Akogunimoleayo@outlook.com>",
+            "received-spf": "Received-SPF: pass (google.com: domain of akogunimoleayo@outlook.com designates 2a01:111:f403:d20f::3 as permitted sender) client-ip=2a01:111:f403:d20f::3;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@outlook.com header.s=selector1 header.b=Sa3iswZX;\r\n       arc=pass (i=1);\r\n       spf=pass (google.com: domain of akogunimoleayo@outlook.com designates 2a01:111:f403:d20f::3 as permitted sender) smtp.mailfrom=Akogunimoleayo@outlook.com;\r\n       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=outlook.com",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;\r\n s=selector1;\r\n h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;\r\n bh=jFJxd5uSZeAvSvRpi4wb3DPoG5Zwf6N9VXZe9wW6+IE=;\r\n b=Sa3iswZXOUzgtno/e3U15PbKua96t3wmRNePAar3Zj/7AQE15pY+aCmDia4M5uANkAAzbrT5qhNxSLDqNPcJJM3JTet5bGxZX4ZJBrU8PKwRZy75uqJqPpQvgRq/nWByQgRl2HUxEjvZMYZvsy54AMVTaq1UmmWiReh4OSKj+OwNLlOEn+vJ9oXw8okNyZTI9YeK8SuLX3JqADB/HgYUgjZP6mTCExr7xskBv5l8tX1eq8TFU3rJRhmjTfSHaxc8H1ySkb/83bc2fvIUOCpGytc3vArgoFj2dBv5BmzIWCHQyLMo9zq1qchOjvAvdzcEaG+Q8j0SmmiZ4Y9lcJLY9Q==",
+            "from": "From: Imoleayo Akogun <Akogunimoleayo@outlook.com>",
+            "to": "To: Akogun Imoleayo <imoleayoakogun@gmail.com>",
+            "subject": "Subject: Question about lipid profile pricing",
+            "thread-topic": "Thread-Topic: Question about lipid profile pricing",
+            "thread-index": "Thread-Index: AQHdTgRKZJAkQwLAOUu0aHhV5vwWhQ==",
+            "date": "Date: Sat, 26 Sep 2026 22:14:09 +0000",
+            "message-id": "Message-ID:\r\n <DB9P250MB1391C483509D948C58BE7683D08F2@DB9P250MB1391.EURP250.PROD.OUTLOOK.COM>",
+            "accept-language": "Accept-Language: en-US",
+            "content-language": "Content-Language: en-US",
+            "x-ms-has-attach": "X-MS-Has-Attach:",
+            "x-ms-tnef-correlator": "X-MS-TNEF-Correlator:",
+            "msip_labels": "msip_labels:",
+            "x-ms-publictraffictype": "x-ms-publictraffictype: Email",
+            "x-ms-traffictypediagnostic": "x-ms-traffictypediagnostic: DB9P250MB1391:EE_|AM8P250MB0343:EE_",
+            "x-ms-office365-filtering-correlation-id": "x-ms-office365-filtering-correlation-id: 0046fed6-0685-490d-2c55-08df1c1b7c9f",
+            "x-ms-exchange-slblob-mailprops": "x-ms-exchange-slblob-mailprops:\r\n vQx3cGk1+xyLe+9KTlgH41NSh9p/oCwvFQvvnW38EEBf6uwLr9ol06HRK6CtwwOkyMKMjA7x4843w9Y3S4aYb0DjAp7HFiJubAP+XrbYPAl5hsp/TkopDDEDY7Xf9dgR5af73nIQtS57rnY81+lYhJDLWkP8SF6zawF3YkTlJHmLvZ8MB9wgpU26se4V5MLHzcVvb//oru/UMuJEzk/J1dL1XS/4IFXNCP4YXiNWkca1iAnXhnEmhjid7MCL7Fu2lxyb1eI+RCbenpbtGS34vgkKdoQ9BkbdQwtkGktiKI1BHkKJgHXjxOcfdlHuA7ecI07lbXW1YUdAO1ckX5CV3jqVsXRSmSOIGgH84hyYpXscLeXio5rYpuGIQc8jSkjJ6YmH6hJ1+bJHZgNlDaMGteCUPgpRuw0Bfrx3wlkki89NPQ26yWQuQXtfj+im7d4dG1+0Sq8kXPjEitpbVZ7OipRhOwwY/ZCp8wPKVPLj2G5drhvM4k60vewlp8iL33zdnJxgIW4hSWS413RTS9rO40V0hZGo26j6cLo6luJeeiMrhTTV/TjePGOfACIuuHUJVW6IO7NWP0/6LzsBgoTYXZhB2KelBSjV1XnAPVEhL3s=",
+            "x-microsoft-antispam": "x-microsoft-antispam:\r\n BCL:0;ARA:14566002|31061999003|8062599012|25010399006|51005399006|19110799012|8060799015|19101099003|15030799006|15080799012|3412199025|440099028|102099032|40105399003|2607281247196008;",
+            "x-microsoft-antispam-message-info": "x-microsoft-antispam-message-info:\r\n =?iso-8859-1?Q?Aq/8sm6u+D7+1GXJoXFs9hwES2FNKLRtJQD6MA4EVeeQS+BJ/IVDIhMW8k?=\r\n =?iso-8859-1?Q?dcJsvVv3ZrzycSPKGBifckvrwE3ysVQPhzza/uOig1P3AucMHGSTs+BnTw?=\r\n =?iso-8859-1?Q?IwBWwDGCv1pArRk7xV/v792My3oOpuKLFq6+S6a1pmeIXZAwau3GRaqRAi?=\r\n =?iso-8859-1?Q?/Xa1MdVEkJs7c2BlDxPKy9hePBKN9vIg+vT/zb+c9pq5FbyPuyKZO+KAhr?=\r\n =?iso-8859-1?Q?kuDsS4UTxr625cSbqwM+elAuNr/K4brltX2Dgnhnn973Bl1cS8eQ4yMc/B?=\r\n =?iso-8859-1?Q?YsgihtgIYxi3jsjNPp3beZMUo0KF94Dh77OsGC/PvWOSZ2BxW5dHQgEXVT?=\r\n =?iso-8859-1?Q?PE8Y4eqVE/zsVgO1JOpbySfwhADOMoeaM1lDvPARgkBg1TL8K9rOBIC+oI?=\r\n =?iso-8859-1?Q?+NZkkbnhZTBNvS6HSbS+pGjkwByCujPOXFDs+hcKtopMVrL0zSkRtINONt?=\r\n =?iso-8859-1?Q?kJk3VVuF+LtSeIbVQ1WXrSCbsjzHEmCcd25dMA2U9B9bci1OXEyj43nGmL?=\r\n =?iso-8859-1?Q?ekv8f0V8VAtLkixv2mrTy19rTMeJV5vsuPEtU9iyROV/JvcDTBJPDBVD5q?=\r\n =?iso-8859-1?Q?s757qZ9tS70tUQXvFpHNgeVNMfSGytVK0ogA5iNICh06kwxGV8Re1B0oN2?=\r\n =?iso-8859-1?Q?1XAHzZItstOK/Owif5+AVCMPXO89y2xyZeZzJQB3K8yfruHapt7mJOsvrn?=\r\n =?iso-8859-1?Q?RuwT35QFoQ40c2xlV9PvvtTifUBjckYPeMAQVY++QxMAniyajqaCySNMR7?=\r\n =?iso-8859-1?Q?iPalwtSgbXNP84J8z241CNnden+g19cO58w3lB0bVmEaLu4hMWTBnDHDv7?=\r\n =?iso-8859-1?Q?56cltle0gJg+/9k5i7WvtigdFi4fDg3odv1GoaFjy5fmh9TQV7NvfA1TCc?=\r\n =?iso-8859-1?Q?FXKjwa7789xXuu+3BcBVHl6mOnzxsb8I3TIlrxAz/N2oz/4oRjuaZLNkMA?=\r\n =?iso-8859-1?Q?exg6xIJ0p/qzxX3C8iN8VB+e0GEPij1v1qfASzPfk/DZ6Ez2udMj7bO8rK?=\r\n =?iso-8859-1?Q?HfEX7bWMjztUQX6rI=3D?=",
+            "x-ms-exchange-antispam-messagedata-chunkcount": "x-ms-exchange-antispam-messagedata-chunkcount: 1",
+            "x-ms-exchange-antispam-messagedata-0": "x-ms-exchange-antispam-messagedata-0:\r\n =?iso-8859-1?Q?xnQX7om6405BtuqBkYivw5tNz2dbtt/tQOjqkQnsiUHQ+IYJjxOTB2duoe?=\r\n =?iso-8859-1?Q?c4m9Ef2YKmQ4xkySRXbRpC/f4r66P0bK94YPm1mwHQ5RDip31sM8Um7+y8?=\r\n =?iso-8859-1?Q?9xaBnyiUU8Yi6CjMMiWHU7wOQLl8Fc8n56xC0hz2jgk6+JDAekA5J5zWC2?=\r\n =?iso-8859-1?Q?y0Y/ukV7R93i3amEg9Xu4yHkg8qQmihzCEX2UyE1yg4tlvzjJkOD5lSWCR?=\r\n =?iso-8859-1?Q?Xfg89A9VWqz9V4KHC/cifd6pO0Cy+VjsVw3zIo+CKf9Ce6ohwtEYwQ/H/H?=\r\n =?iso-8859-1?Q?ZomD50LNY0/rthlqmCaN5VrPjuq7BmyzyjBP1j8IC7IVVwLLgO4zfAdkYO?=\r\n =?iso-8859-1?Q?LvB5hB6OOXcn2/z3LIfGJbPTnzIkk0BETYIxkZpVOZyz5Hlrdk7ZlODJSb?=\r\n =?iso-8859-1?Q?pa7F8Cd9O6DAdpDD+1RoZ1UvpBvdt7m+N0ZQrWMDheHPPripBjwE6Qfxo7?=\r\n =?iso-8859-1?Q?TRd/bgqvPZjuS9+5w9SSSjhke+4d5qqqlwkSGwfThnE4hclxqs7GCdjKTA?=\r\n =?iso-8859-1?Q?QmVRCWDuOOaNSy2NW+iNxaKMCGyqSCKz5+NViOFog3ZeBcSt/CbtRRkGvZ?=\r\n =?iso-8859-1?Q?/NVCAhfbVUq57baEGtYNFuRNgHg4g8OqpdLaqx2NGpEoTU5WjNUZb7p/lY?=\r\n =?iso-8859-1?Q?IwdVJqzRKIpFKhQgF/f7wlAjHNfgGMO8ws0H780BlVs5VPsj0O+v6z+Dj8?=\r\n =?iso-8859-1?Q?vj7qzv/FFQdx+Z/Wd72wEWprWr3e/7IRfy3kqbF8KD7SCna8R35zmITS41?=\r\n =?iso-8859-1?Q?vUGJEFVtf4HJk/v0e7NqDiySdAQUcoJIbcHfz40J49r+9GhCihYjRvgSqT?=\r\n =?iso-8859-1?Q?Sa73/Whc+8//zp8Q3cFqZ6EOANZQgRtLHZlcNbgaJLVT82mhVt5kBTP7KK?=\r\n =?iso-8859-1?Q?ysHp0eBfVOkw44YfdNQ6ZPe1SsBXTKmVABZLT33zfgUBd9cHJec5O3rGUy?=\r\n =?iso-8859-1?Q?2moWmVgqyubxqByxoDmM66VaeZPPodtphDUIcSbyiB+MKLFkoFkHLZ7Oo3?=\r\n =?iso-8859-1?Q?b9hcUy1JHbwetZSePWgWGWD8YZla7THrQ6AKMdhtUNDNhkzrx6XaBU7BVq?=\r\n =?iso-8859-1?Q?KDlPlvXHGk04DpHftYVmcJkC0Idg2TKu0di+KIEH5Chj6SkeatBm0ksudW?=\r\n =?iso-8859-1?Q?B3uG/el1j4qNxIZnCH0SE5ql++awSFj40uXF61xuAIaCR/kV/5R4RVn5oI?=\r\n =?iso-8859-1?Q?tecjRCbOjysyXZRaHQQp4L//JVCUfVskBWm8xXeeAwHIlPQifDePVXy8kr?=\r\n =?iso-8859-1?Q?DVTEiB60ODpbxv6dybQoUR7MegyxU7VI4sGcmnzdfXOaM++FGXYLOZ77Iu?=\r\n =?iso-8859-1?Q?K4M6iUPkAAUXh5Q71CWNdZo9nyOohW7iSYuIxd0fr1HIcBSAHAbLVYX1PF?=\r\n =?iso-8859-1?Q?eqJbAW2L6eLocNVk52RxzrniEKvV/zAyD0BZ2bag6/SGCMf4/bmqRWHwbN?=\r\n =?iso-8859-1?Q?RItpSIFEj7pyD5Mv?=",
+            "content-type": "Content-Type: multipart/alternative;\r\n\tboundary=\"_000_DB9P250MB1391C483509D948C58BE7683D08F2DB9P250MB1391EURP_\"",
+            "mime-version": "MIME-Version: 1.0",
+            "x-originatororg": "X-OriginatorOrg: outlook.com",
+            "x-ms-exchange-crosstenant-authas": "X-MS-Exchange-CrossTenant-AuthAs: Internal",
+            "x-ms-exchange-crosstenant-authsource": "X-MS-Exchange-CrossTenant-AuthSource: DB9P250MB1391.EURP250.PROD.OUTLOOK.COM",
+            "x-ms-exchange-crosstenant-rms-persistedconsumerorg": "X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000",
+            "x-ms-exchange-crosstenant-network-message-id": "X-MS-Exchange-CrossTenant-Network-Message-Id: 0046fed6-0685-490d-2c55-08df1c1b7c9f",
+            "x-ms-exchange-crosstenant-originalarrivaltime": "X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2026 22:14:09.0139\r\n (UTC)",
+            "x-ms-exchange-crosstenant-fromentityheader": "X-MS-Exchange-CrossTenant-fromentityheader: Hosted",
+            "x-ms-exchange-crosstenant-id": "X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa",
+            "x-ms-exchange-transport-crosstenantheadersstamped": "X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8P250MB0343"
+          },
+          "html": "<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n<style type=\"text/css\" style=\"display:none;\"> P {margin-top:0;margin-bottom:0;} </style>\n</head>\n<body dir=\"ltr\">\n<div style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\nHi BrightCare team,</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\n<br>\n</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\nI'm Akogun Imoleayo. I'd like to know how much a lipid profile costs and</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\nwhether I need to fast beforehand. I'm hoping to book something for this</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\nSaturday if possible.</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\n<br>\n</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\nThanks,</div>\n<div class=\"elementToProof\" style=\"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);\">\nImoleayo</div>\n</body>\n</html>\n",
+          "text": "Hi BrightCare team,\n\nI'm Akogun Imoleayo. I'd like to know how much a lipid profile costs and\nwhether I need to fast beforehand. I'm hoping to book something for this\nSaturday if possible.\n\nThanks,\nImoleayo\n",
+          "textAsHtml": "<p>Hi BrightCare team,</p><p>I&apos;m Akogun Imoleayo. I&apos;d like to know how much a lipid profile costs and<br/>whether I need to fast beforehand. I&apos;m hoping to book something for this<br/>Saturday if possible.</p><p>Thanks,<br/>Imoleayo</p>",
+          "subject": "Question about lipid profile pricing",
+          "date": "2026-09-26T22:14:09.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "imoleayoakogun@gmail.com",
+                "name": "Akogun Imoleayo"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Akogun Imoleayo</span> &lt;<a href=\"mailto:imoleayoakogun@gmail.com\" class=\"mp_address_email\">imoleayoakogun@gmail.com</a>&gt;</span>",
+            "text": "\"Akogun Imoleayo\" <imoleayoakogun@gmail.com>"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "Akogunimoleayo@outlook.com",
+                "name": "Imoleayo Akogun"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Imoleayo Akogun</span> &lt;<a href=\"mailto:Akogunimoleayo@outlook.com\" class=\"mp_address_email\">Akogunimoleayo@outlook.com</a>&gt;</span>",
+            "text": "\"Imoleayo Akogun\" <Akogunimoleayo@outlook.com>"
+          },
+          "messageId": "<DB9P250MB1391C483509D948C58BE7683D08F2@DB9P250MB1391.EURP250.PROD.OUTLOOK.COM>"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "SetEmailOutput": {
+      "main": [
+        [
+          {
+            "node": "Call 'MCA-Upsert- CRM'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'MCA-Upsert- CRM'": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "SetEmailOutput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "3kw7TkeYo3wRArRZ",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "9f8324ca-1457-4127-b052-5da31e62020d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3094527659ec0479e596e038504f40e0bde302faf341ebc6a74f0360da82d4d1"
+  },
+  "nodeGroups": [],
+  "id": "jMYzfCPvpWLPoX2Z",
+  "tags": []
+}

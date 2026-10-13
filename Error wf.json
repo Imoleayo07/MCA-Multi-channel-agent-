@@ -1,0 +1,72 @@
+{
+  "name": "Error wf",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "03fb340f-6213-452e-9fd0-d52dae4d159e",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C05A50P1Q",
+          "mode": "id"
+        },
+        "text": "=Warning: There is an error in this workflow\nError Name: {{ $json.workflow.name }}\nError Message: {{ $json.execution.error.message }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        176,
+        0
+      ],
+      "id": "b7e67036-7f74-4e64-9759-806b48424060",
+      "name": "Send error wf",
+      "webhookId": "f1703e34-f410-4d8f-bb96-cc67a5ac157e",
+      "credentials": {
+        "slackApi": {
+          "id": "EwxQ3gRbFFrTW1kV",
+          "name": "Akogun"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send error wf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c8e92e60-086c-469d-a34f-e110959d06b8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3094527659ec0479e596e038504f40e0bde302faf341ebc6a74f0360da82d4d1"
+  },
+  "nodeGroups": [],
+  "id": "3kw7TkeYo3wRArRZ",
+  "tags": []
+}

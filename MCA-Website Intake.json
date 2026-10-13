@@ -1,0 +1,221 @@
+{
+  "name": "MCA-Website Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mca-website",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "94ce52d4-77b7-48e0-bee6-40e6689c7f51",
+      "name": "Website-intake",
+      "webhookId": "5490f209-b7e7-4e73-b633-6132781ac4f5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa51723c-e79a-492a-a57a-292ea72cab3d",
+              "name": "message_id",
+              "value": "=WEB-{{ $now.toFormat('yyyyMMddHHmmssSSS') }}-{{ Math.floor(1000 + Math.random() * 9000) }}",
+              "type": "string"
+            },
+            {
+              "id": "69aad88a-24a9-4f2f-921b-49aa12004588",
+              "name": "channel",
+              "value": "website_chat",
+              "type": "string"
+            },
+            {
+              "id": "b43e273d-8140-4831-b28b-6615a8a25117",
+              "name": "sender_name",
+              "value": "={{ $json.body.name ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "d41dfa69-6dd3-4e79-b79b-fe29592702a2",
+              "name": "sender_email",
+              "value": "={{ $json.body.email ?? \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "af27a5ba-bbce-43b5-bdfd-0a009027ae51",
+              "name": "sender_phone",
+              "value": "={{ $json.body.phone ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "0ce89f4b-45b5-4d44-9bc9-00e444c1fe48",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "8cd71b45-3ee0-4eb3-b013-1d3fdbb8feb1",
+              "name": "received_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "0d137790-70c3-4bdd-82ac-a7fde085922d",
+              "name": "company",
+              "value": "={{ $json.body.company ?? \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "182f9ea3-60b0-4994-8f11-312a820e05c2",
+      "name": "SetWebOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "RPE8SsWvugYWJCHY",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/RPE8SsWvugYWJCHY",
+          "cachedResultName": "MCA-Upsert- CRM"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        -16
+      ],
+      "id": "57da7641-d08a-4807-94d5-2ffee25cdf37",
+      "name": "Call 'MCA-Upsert- CRM'"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "f9804f0a-4f2c-4c49-a839-9a4e04a3f788",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {
+    "Website-intake": [
+      {
+        "json": {
+          "headers": {
+            "user-agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.9444",
+            "content-type": "application/json",
+            "host": "localhost:5678",
+            "content-length": "178",
+            "connection": "Keep-Alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "email": "p6.tester@example.com",
+            "message": "How much is a lipid profile and do I need to fast?",
+            "session_id": "p6_001",
+            "name": "Phase Six Tester"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/mca-website",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Website-intake": {
+      "main": [
+        [
+          {
+            "node": "SetWebOutput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetWebOutput": {
+      "main": [
+        [
+          {
+            "node": "Call 'MCA-Upsert- CRM'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'MCA-Upsert- CRM'": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "3kw7TkeYo3wRArRZ",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "332b10e7-4e11-48ac-b52f-b1b6ebff2f08",
+  "meta": {
+    "instanceId": "3094527659ec0479e596e038504f40e0bde302faf341ebc6a74f0360da82d4d1"
+  },
+  "nodeGroups": [],
+  "id": "YcxYQ0uWbv9aVnGD",
+  "tags": []
+}

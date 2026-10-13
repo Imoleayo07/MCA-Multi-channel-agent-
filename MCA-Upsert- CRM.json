@@ -1,0 +1,930 @@
+{
+  "name": "MCA-Upsert- CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "583e3967-cbe3-4435-a696-5ef78150c6bc",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apphpvRSCjdljjtJY",
+          "mode": "list",
+          "cachedResultName": "Multi_Channel AI CRM",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblFw52SJxWCrqmOj",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY/tblFw52SJxWCrqmOj"
+        },
+        "filterByFormula": "={{ $json.formula }}",
+        "options": {},
+        "sort": {
+          "property": []
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "45ac4b80-defd-4e40-9887-d49e2db41285",
+      "name": "Search Customer",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "l3DPfdxJ94X7LxIt",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "debd8285-ce9e-43d3-b847-33a7e1c002d6",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "2aba665f-f76f-4cd0-a27f-957a921fe682",
+      "name": "Customer Found?"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "apphpvRSCjdljjtJY",
+          "mode": "list",
+          "cachedResultName": "Multi_Channel AI CRM",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblFw52SJxWCrqmOj",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY/tblFw52SJxWCrqmOj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer ID": "= CUS-{{ $now.toFormat('yyyyMMddHHmmss') }}-{{ Math.floor(1000 + Math.random() * 9000) }}",
+            "Name": "={{ $('Normalize Input').first().json.sender_name }}",
+            "Email": "={{ $('Normalize Input').first().json.sender_email }}",
+            "Phone": "={{ $('Normalize Input').first().json.sender_phone }}",
+            "Preferred Channel": "={{ $('Normalize Input').first().json.channel }}",
+            "First Interaction": "={{ $('Normalize Input').first().json.received_at }}",
+            "Last Interaction": "={{ $('Normalize Input').first().json.received_at }}",
+            "Customer Status": "New",
+            "Channels Used": "={{ [$('Normalize Input').first().json.channel] }}",
+            "Company": "={{ $('Normalize Input').item.json.company }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Preferred Channel",
+              "displayName": "Preferred Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "website_chat",
+                  "value": "website_chat"
+                },
+                {
+                  "name": "email",
+                  "value": "email"
+                },
+                {
+                  "name": "whatsapp",
+                  "value": "whatsapp"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "First Interaction",
+              "displayName": "First Interaction",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Interaction",
+              "displayName": "Last Interaction",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Customer Status",
+              "displayName": "Customer Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "Active",
+                  "value": "Active"
+                },
+                {
+                  "name": "Inactive",
+                  "value": "Inactive"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channels Used",
+              "displayName": "Channels Used",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "website_chat",
+                  "value": "website_chat"
+                },
+                {
+                  "name": "email",
+                  "value": "email"
+                },
+                {
+                  "name": "whatsapp",
+                  "value": "whatsapp"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Escalation Status",
+              "displayName": "Escalation Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "None",
+                  "value": "None"
+                },
+                {
+                  "name": "Pending Human Review",
+                  "value": "Pending Human Review"
+                },
+                {
+                  "name": "Resolved",
+                  "value": "Resolved"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        96
+      ],
+      "id": "f6aeb155-f6df-49b1-9841-c0946bfdffda",
+      "name": "Create Customer",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "l3DPfdxJ94X7LxIt",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\n\n// Detect which channel's raw shape this is and normalize into a common shape\nlet i;\n\nif (raw.from !== undefined && raw.textPlain !== undefined) {\n  // Email (Gmail trigger raw shape)\n  const fromMatch = String(raw.from || '').match(/^(.*?)\\s*<(.+?)>$/);\n  i = {\n    sender_name: fromMatch ? fromMatch[1].trim().replace(/^\"|\"$/g, '') : String(raw.from || '').trim(),\n    sender_email: fromMatch ? fromMatch[2].trim().toLowerCase() : '',\n    sender_phone: '',\n    channel: 'email',\n    company: '',\n    received_at: raw.date || new Date().toISOString(),\n    message: raw.textPlain || raw.snippet || ''\n  };\n} else if (raw.data !== undefined) {\n  // WhatsApp (UltraMsg raw shape)\n  i = {\n    sender_name: raw.data.pushname || '',\n    sender_email: '',\n    sender_phone: raw.data.from || '',\n    channel: 'WhatsApp',\n    company: '',\n    received_at: new Date().toISOString(),\n    message: raw.data.body || ''\n  };\n} else {\n  // Website intake — already normalized upstream\n  i = raw;\n}\nlet d = String(i.sender_phone || '').replace(/\\D/g, '');\nif (d.startsWith('00')) d = d.slice(2);\nif (d.startsWith('0')) d = '234' + d.slice(1);\nelse if (d.length === 10) d = '234' + d;\nconst phone = d;\n\nconst email = String(i.sender_email || '').trim().toLowerCase();\nconst esc = s => s.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\");\n\nconst parts = [];\nif (email) parts.push(`LOWER({Email})='${esc(email)}'`);\nif (phone) parts.push(`{Phone}='${esc(phone)}'`);\nconst formula = parts.length ? `OR(${parts.join(',')})` : 'FALSE()';\n\nreturn [{ json: { ...i, sender_email: email, sender_phone: phone, formula } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "5b80b0ad-d09a-42e4-ba84-c8fed480659d",
+      "name": "Normalize Input"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "apphpvRSCjdljjtJY",
+          "mode": "list",
+          "cachedResultName": "Multi_Channel AI CRM",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR4dupj6qks88HO",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY/tblR4dupj6qks88HO"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Conversation ID": "=CNV-{{ $now.toFormat('yyyyMMddHHmmssSSS') }}-{{ Math.floor(1000 + Math.random() * 9000) }}",
+            "Customer ID": "={{ $('Merge Customer').isExecuted ? $('Merge Customer').first().json.customer_id : ($json.fields?.['Customer ID'] ?? $json['Customer ID']) }}",
+            "Channel": "={{ $('Normalize Input').first().json.channel }}",
+            "Message ID": "={{ $('Normalize Input').first().json.message_id }}",
+            "Message": "={{ ($('Normalize Input').first().json.subject ? 'Subject: ' + $('Normalize Input').first().json.subject + '\\n\\n' : '') + $('Normalize Input').first().json.message }}",
+            "Sender Type": "Customer",
+            "Timestamp": "={{ $('Normalize Input').first().json.received_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Conversation ID",
+              "displayName": "Conversation ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channel",
+              "displayName": "Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "website_chat",
+                  "value": "website_chat"
+                },
+                {
+                  "name": "email",
+                  "value": "email"
+                },
+                {
+                  "name": "whatsapp",
+                  "value": "whatsapp"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message ID",
+              "displayName": "Message ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sender Type",
+              "displayName": "Sender Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Customer",
+                  "value": "Customer"
+                },
+                {
+                  "name": "AI Agent",
+                  "value": "AI Agent"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Response",
+              "displayName": "Response",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "153a29fe-6503-4337-879b-77815a57764e",
+      "name": "Log Conversation",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "l3DPfdxJ94X7LxIt",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphpvRSCjdljjtJY",
+          "mode": "list",
+          "cachedResultName": "Multi_Channel AI CRM",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblFw52SJxWCrqmOj",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://airtable.com/apphpvRSCjdljjtJY/tblFw52SJxWCrqmOj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Last Interaction": "={{ $json.last_interaction }}",
+            "Customer Status": "Active",
+            "Channels Used": "={{ $json.channels_used }}",
+            "Company": "={{ $json.company }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Preferred Channel",
+              "displayName": "Preferred Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "website_chat",
+                  "value": "website_chat"
+                },
+                {
+                  "name": "email",
+                  "value": "email"
+                },
+                {
+                  "name": "whatsapp",
+                  "value": "whatsapp"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "First Interaction",
+              "displayName": "First Interaction",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Interaction",
+              "displayName": "Last Interaction",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Customer Status",
+              "displayName": "Customer Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "Active",
+                  "value": "Active"
+                },
+                {
+                  "name": "Inactive",
+                  "value": "Inactive"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channels Used",
+              "displayName": "Channels Used",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "website_chat",
+                  "value": "website_chat"
+                },
+                {
+                  "name": "email",
+                  "value": "email"
+                },
+                {
+                  "name": "whatsapp",
+                  "value": "whatsapp"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        -96
+      ],
+      "id": "f306288d-8c9a-4458-8d57-ada614bd1b84",
+      "name": "Update Customer",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "l3DPfdxJ94X7LxIt",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rec = $input.first().json;\nconst f = rec.fields ?? rec;\nconst n = $('Normalize Input').first().json;\n\nconst used = new Set(Array.isArray(f['Channels Used']) ? f['Channels Used'] : []);\nused.add(n.channel);\n\nreturn [{ json: {\n  id: rec.id,\n  customer_id: f['Customer ID'],\n  name: f['Name'] || n.sender_name || '',\n  email: f['Email'] || n.sender_email || '',\n  phone: f['Phone'] || n.sender_phone || '',\n  company: f['Company'] || n.company || '',\n  channels_used: [...used],\n  last_interaction: n.received_at\n}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "620ca4ac-3470-4eae-812c-0800abffc94c",
+      "name": "Merge Customer"
+    },
+    {
+      "parameters": {
+        "jsCode": "const n = $('Normalize Input').first().json;\nconst rec = $input.first().json;\nconst f = rec.fields ?? rec;\n\nreturn [{ json: {\n  conversation_id: rec.id,\n  customer_id: f['Customer ID'],\n  message_id: n.message_id,\n  channel: n.channel,\n  subject: n.subject || '',\n  message: n.message || '',\n  received_at: n.received_at,\n  sender_phone: n.sender_phone || '',\n  sender_email: n.sender_email || '',\n  gmail_message_id: n.gmail_message_id || '',\n  gmail_thread_id: n.gmail_thread_id || ''\n}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ],
+      "id": "bfd35010-bc69-4c26-a823-edfba0874393",
+      "name": "Prepare AI Input"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "LP4qs6kV0QNkGwxa",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/LP4qs6kV0QNkGwxa",
+          "cachedResultName": "MCA-AI Brain"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        0
+      ],
+      "id": "2616170a-1022-475f-bb3e-d4e0da3d9f4e",
+      "name": "Call 'MCA-AI Brain'"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "message_id": "WA-20260929124456199-6029",
+          "channel": "whatsapp",
+          "sender_name": null,
+          "sender_phone": null,
+          "message": null,
+          "received_at": "2026-09-29T12:44:56.221+01:00",
+          "company": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Customer": {
+      "main": [
+        [
+          {
+            "node": "Customer Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Found?": {
+      "main": [
+        [
+          {
+            "node": "Merge Customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "Search Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Customer": {
+      "main": [
+        [
+          {
+            "node": "Log Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Customer": {
+      "main": [
+        [
+          {
+            "node": "Log Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Customer": {
+      "main": [
+        [
+          {
+            "node": "Update Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Conversation": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Input": {
+      "main": [
+        [
+          {
+            "node": "Call 'MCA-AI Brain'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "3kw7TkeYo3wRArRZ",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "834dcc21-0dbc-464c-ae82-ed84968110c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3094527659ec0479e596e038504f40e0bde302faf341ebc6a74f0360da82d4d1"
+  },
+  "nodeGroups": [],
+  "id": "RPE8SsWvugYWJCHY",
+  "tags": []
+}
